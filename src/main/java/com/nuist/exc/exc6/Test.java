@@ -33,6 +33,7 @@ public class Test {
                     5. 从文件加载索引
                     6. 查看搜索日志
                     7. 清空搜索日志
+                    8. 生成测试用目录
                     0. 退出系统
                     """);
 
@@ -47,6 +48,7 @@ public class Test {
                 case "5" -> loadIndex();
                 case "6" -> viewLog();
                 case "7" -> deleteLog();
+                case "8" -> buildTestDirs();
 
                 case "0" -> {
                     System.out.println("感谢使用文件搜索系统！");
@@ -55,6 +57,37 @@ public class Test {
                 default -> System.out.println("无效选项，请重新输入");
             }
         }
+    }
+
+    private static void buildTestDirs() {
+        System.out.println("请输入测试用目录的生成目录：");
+        String dirPath = scanner.nextLine().trim();
+        File dir = new File(dirPath);
+        if (!dir.isDirectory()||!dir.exists()) {
+            System.out.println("目录不存在或不是一个目录: " + dir.getAbsolutePath());
+            return;
+        }
+        System.out.println("正在生成测试用目录...");
+        for (int i = 0; i < 3; i++){
+            File subDir = new File(dir, "testDir" + i);
+            subDir.mkdirs();
+        }
+        File[] dirs = dir.listFiles(File::isDirectory);
+        for (File f : dirs) {
+            for (int j = 0; j < 5; j++) {
+                File subDir = new File(f, "subDir" + j);
+                subDir.mkdirs();
+                for (int k = 0; k < 2; k++) {
+                    File file = new File(subDir, "file" + k + ".txt");
+                    try {
+                        file.createNewFile();
+                    } catch (IOException e) {
+                        System.out.println("无法创建文件: " + file.getAbsolutePath());
+                    }
+                }
+            }
+        }
+        System.out.println("测试用目录已生成");
     }
 
     private static void deleteLog() {
@@ -160,7 +193,7 @@ public class Test {
         String choice = scanner.nextLine().trim().toLowerCase();
         if ("y".equals(choice) || "yes".equals(choice)) {
             System.out.println("!!!WARNING!!!再次确认:是否删除以上找到的文件？");
-            System.out.print("请输入y/yes以确认删除: ");
+            System.out.print("请再次输入y/yes以确认删除: ");
             String choice2 = scanner.nextLine().trim().toLowerCase();
             if("y".equals(choice2) || "yes".equals(choice2)){
                 System.out.println("正在删除文件...");
